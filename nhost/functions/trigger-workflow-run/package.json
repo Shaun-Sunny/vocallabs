@@ -3,9 +3,11 @@
   "version": "1.0.0",
   "main": "index.ts",
   "dependencies": {
-    "@nhost/nhost-js": "^3.0.0"
+    "@nhost/nhost-js": "^3.0.0",
+    "express": "^5.2.1"
   },
   "devDependencies": {
+    "@types/express": "^5.0.6",
     "@types/node": "^20.0.0",
     "typescript": "^5.0.0"
   }
