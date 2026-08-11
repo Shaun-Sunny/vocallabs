@@ -1,0 +1,94 @@
+[global]
+project_id = 'ai-workflow-builder'
+
+[auth]
+enabled = true
+disable_signup = false
+
+[auth.email]
+enabled = true
+disable_signup = false
+
+[auth.email.passwordless]
+enabled = false
+
+[auth.email.smtp]
+host = 'smtp.example.com'
+port = 587
+user = 'user'
+pass = 'pass'
+sender = 'noreply@example.com'
+
+[auth.external.github]
+enabled = false
+
+[auth.external.google]
+enabled = false
+
+[auth.mfa]
+enabled = false
+
+[auth.user]
+[auth.user.roles]
+default = 'user'
+allowed = ['user', 'me']
+
+[auth.session]
+[auth.session.accessToken]
+expiresIn = 900
+
+[auth.session.refreshToken]
+expiresIn = 2592000
+
+[postgres]
+version = '16'
+
+[postgres.resources]
+[postgres.resources.storage]
+capacity = 1
+
+[hasura]
+version = 'v2.40.0'
+
+[hasura.resources]
+[hasura.resources.replicas]
+min = 1
+max = 1
+
+[hasura.resources.compute]
+cpu = 250
+memory = 512
+
+[hasura.settings]
+corsDomain = ['http://localhost:3000', 'https://*.vercel.app']
+devMode = true
+enableConsole = true
+enableRemoteSchemaPermissions = false
+enableTelemetry = false
+stringifyNumericTypes = false
+
+[hasura.settings.jwtSecrets]
+type = 'HS256'
+key = '{{ secrets.HASURA_GRAPHQL_JWT_SECRET }}'
+
+[hasura.settings.rateLimit]
+limit = 100
+interval = '1m'
+
+[functions]
+[functions.node]
+version = 20
+
+[storage]
+version = '0.6.1'
+
+[storage.resources]
+[storage.resources.storage]
+capacity = 1
+
+[observability]
+[observability.grafana]
+adminPassword = 'admin'
+
+[observability.grafana.alerting]
+enabled = false

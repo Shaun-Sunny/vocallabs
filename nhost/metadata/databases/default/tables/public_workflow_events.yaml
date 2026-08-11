@@ -1,0 +1,54 @@
+table:
+  name: workflow_events
+  schema: public
+object_relationships:
+  - name: organization
+    using:
+      foreign_key_constraint_on: org_id
+insert_permissions:
+  - role: user
+    permission:
+      check:
+        organization:
+          org_members:
+            _and:
+              - user_id:
+                  _eq: X-Hasura-User-Id
+              - role:
+                  _in: [owner, editor]
+      columns:
+        - org_id
+        - event_type
+        - payload
+select_permissions:
+  - role: user
+    permission:
+      columns:
+        - id
+        - org_id
+        - event_type
+        - payload
+        - processed
+        - created_at
+      filter:
+        organization:
+          org_members:
+            user_id:
+              _eq: X-Hasura-User-Id
+
+event_triggers:
+  - name: workflow_events_event_trigger
+    definition:
+      enable_manual: false
+      insert:
+        columns: '*'
+    webhook: '{{NHOST_FUNCTIONS_URL}}/trigger-workflow-run'
+    headers:
+      - name: x-hasura-admin-secret
+        value_from_env: NHOST_ADMIN_SECRET
+      - name: x-event-trigger
+        value: database_event
+    retry_conf:
+      interval_sec: 10
+      num_retries: 3
+      timeout_sec: 60

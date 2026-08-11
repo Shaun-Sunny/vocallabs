@@ -1,0 +1,18 @@
+cron_triggers:
+  - name: scheduled_workflow_runner
+    webhook: '{{NHOST_FUNCTIONS_URL}}/scheduled-runner'
+    schedule: '* * * * *'
+    include_in_metadata: true
+    payload: {}
+    headers:
+      - name: x-hasura-admin-secret
+        value_from_env: NHOST_ADMIN_SECRET
+  - name: reset_monthly_quotas
+    webhook: '{{NHOST_FUNCTIONS_URL}}/scheduled-runner'
+    schedule: '0 0 1 * *'
+    include_in_metadata: true
+    payload:
+      action: reset_quotas
+    headers:
+      - name: x-hasura-admin-secret
+        value_from_env: NHOST_ADMIN_SECRET

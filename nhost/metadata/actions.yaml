@@ -1,0 +1,128 @@
+actions:
+  - name: createOrganization
+    definition:
+      kind: synchronous
+      arguments:
+        - name: input
+          type: CreateOrganizationInput!
+      output_type: CreateOrganizationOutput
+      handler: '{{NHOST_FUNCTIONS_URL}}/create-organization'
+      forward_client_headers: true
+      headers:
+        - name: x-hasura-admin-secret
+          value_from_env: NHOST_ADMIN_SECRET
+    permissions:
+      - role: user
+    comment: >-
+      Creates a new organization and adds the calling user as its owner,
+      atomically. Admin-authenticated because org_members insert
+      permissions require the caller to already be an owner in the org —
+      impossible for a brand-new org with no members yet.
+  - name: triggerWorkflowRun
+    definition:
+      kind: synchronous
+      arguments:
+        - name: input
+          type: TriggerWorkflowRunInput!
+      output_type: TriggerWorkflowRunOutput
+      handler: '{{NHOST_FUNCTIONS_URL}}/trigger-workflow-run'
+      forward_client_headers: true
+      headers:
+        - name: x-hasura-admin-secret
+          value_from_env: NHOST_ADMIN_SECRET
+    permissions:
+      - role: user
+    comment: Start a workflow run. Requires owner/editor role in the workflow's org.
+  - name: approveStep
+    definition:
+      kind: synchronous
+      arguments:
+        - name: input
+          type: ApproveStepInput!
+      output_type: ApproveStepOutput
+      handler: '{{NHOST_FUNCTIONS_URL}}/approve-step'
+      forward_client_headers: true
+      headers:
+        - name: x-hasura-admin-secret
+          value_from_env: NHOST_ADMIN_SECRET
+    permissions:
+      - role: user
+    comment: Approve a paused approval_gate step and resume the run.
+  - name: webhookTrigger
+    definition:
+      kind: synchronous
+      arguments:
+        - name: input
+          type: WebhookTriggerInput!
+      output_type: WebhookTriggerOutput
+      handler: '{{NHOST_FUNCTIONS_URL}}/trigger-workflow-run'
+      forward_client_headers: false
+      headers:
+        - name: x-hasura-admin-secret
+          value_from_env: NHOST_ADMIN_SECRET
+    permissions:
+      - role: public
+      - role: user
+    comment: >-
+      Webhook endpoint external systems call to start a run. Nhost's default
+      unauthenticated GraphQL role is `public`, so this must be granted
+      explicitly or an external caller with no nhost session (the normal
+      case for a webhook) gets rejected before the handler's webhook_secret
+      check ever runs. `user` is also allowed for callers who happen to have
+      a session. The webhook_secret comparison inside trigger-workflow-run
+      is the actual security boundary here, not the Hasura role.
+custom_types:
+  enums: []
+  input_objects:
+    - name: CreateOrganizationInput
+      fields:
+        - name: name
+          type: String!
+    - name: TriggerWorkflowRunInput
+      fields:
+        - name: workflow_id
+          type: uuid!
+        - name: trigger_type
+          type: String
+    - name: ApproveStepInput
+      fields:
+        - name: step_run_id
+          type: uuid!
+    - name: WebhookTriggerInput
+      fields:
+        - name: workflow_id
+          type: uuid!
+        - name: webhook_secret
+          type: String!
+        - name: payload
+          type: json
+  objects:
+    - name: CreateOrganizationOutput
+      fields:
+        - name: id
+          type: uuid!
+        - name: name
+          type: String!
+    - name: TriggerWorkflowRunOutput
+      fields:
+        - name: workflow_run_id
+          type: uuid!
+        - name: status
+          type: String!
+        - name: message
+          type: String
+    - name: ApproveStepOutput
+      fields:
+        - name: success
+          type: Boolean!
+        - name: message
+          type: String
+        - name: workflow_run_id
+          type: uuid
+    - name: WebhookTriggerOutput
+      fields:
+        - name: workflow_run_id
+          type: uuid!
+        - name: status
+          type: String!
+  scalars: []

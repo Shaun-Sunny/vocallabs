@@ -1,0 +1,12 @@
+{
+  "name": "trigger-workflow-run",
+  "version": "1.0.0",
+  "main": "index.ts",
+  "dependencies": {
+    "@nhost/nhost-js": "^3.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  }
+}

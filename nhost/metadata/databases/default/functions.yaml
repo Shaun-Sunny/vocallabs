@@ -1,0 +1,16 @@
+functions:
+  - function:
+      name: reserve_org_quota
+      schema: public
+    configuration:
+      exposed_as: mutation
+  - function:
+      name: finalize_org_quota
+      schema: public
+    configuration:
+      exposed_as: mutation
+  - function:
+      name: release_org_quota
+      schema: public
+    configuration:
+      exposed_as: mutation

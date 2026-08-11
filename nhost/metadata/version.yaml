@@ -1,0 +1,14 @@
+version: 2
+metadata:
+  version: 3
+  sources: []
+  actions: []
+  allowlist: []
+  cron_triggers: []
+  remote_schemas: []
+  query_collections: []
+  allowlist: []
+  inherited_roles: []
+  api_limits: {}
+  graphql_schema_introspection: {}
+  network: {}
